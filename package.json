@@ -1,6 +1,6 @@
 {
  "name":"async-ejs",
- "version":"0.1.0",
+ "version":"0.1.1",
  "description":"ejs with the ability to add asynchronous functions",
  "author":[
    "Mathias Buus Madsen <mathiasbuus@gmail.com>",

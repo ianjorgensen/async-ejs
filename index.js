@@ -22,6 +22,17 @@ var fns = {
 	}
 };
 
+var renderFile = function(file, options, callback) {
+	common.step([
+		function(next) {
+			fs.readFile(file, 'utf-8', next);
+		},
+		function(template) {
+			render(template, options, callback);
+		}
+	], callback);
+};
+
 var render = function(src, options, callback) {
 	if (!callback) {
 		callback = options;
