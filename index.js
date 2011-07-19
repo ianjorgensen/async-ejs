@@ -1,28 +1,20 @@
 var fs = require('fs');
+var path = require('path');
 var ejs = require('ejs');
-var exec = require('child_process').exec;
 var common = require('common');
 
-exports.add = function(name, fn) {
-	fns[name] = fn;
-	return exports;
-};
+var noop = function() {};
+var fns = {file:noop};
 
-var fns = {
-	// todo: add circular check
-	file : function(filename, callback) {
-		common.step([
-			function(next) {
-				fs.readFile(filename, 'utf-8', next);
-			},
-			function(src) {
-				render(src, callback);
-			}
-		], callback);
+exports.fn = fns;
+
+var renderFile = function(file, options, callback) {
+	if (!callback) {
+		callback = options;
+		options = {};
 	}
-};
-
-exports.renderFile = function(file, options, callback) {
+	options.cwd = path.dirname(file);
+	
 	common.step([
 		function(next) {
 			fs.readFile(file, 'utf-8', next);
@@ -33,13 +25,27 @@ exports.renderFile = function(file, options, callback) {
 	], callback);
 };
 
+exports.renderFile = renderFile;
+
 var render = function(src, options, callback) {
 	if (!callback) {
 		callback = options;
 		options = {};
 	}
-	options = options || {};
 	options.locals = options.locals || {};
+	options.visited = options.visited || {};
+	options.cwd = options.cwd || '.';
+	
+	fns.file = function(filename, callback) {
+		filename = path.join(options.cwd, filename);
+		
+		if (options.visited[filename]) {
+			callback(new Error('circular file reference: '+filename));
+			return;
+		}
+		options.visited[filename] = true;
+		renderFile(filename, options, callback);
+	};
 	
 	common.step([
 		function(next) {
@@ -78,8 +84,21 @@ var render = function(src, options, callback) {
 		
 			callback(null,src);
 		}
-	]);
+	], callback);
 };
 
 exports.render = render;
-exports.fn = fns;
+
+var add = function(name, fn) {
+	if (typeof name === 'object') {
+		for (var i in name) {
+			add(i, name[i]);
+		}
+		return exports;
+	}
+	fns[name] = fn;
+	
+	return exports;
+};
+
+exports.add = add;
