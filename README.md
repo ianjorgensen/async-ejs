@@ -6,22 +6,26 @@ ejs with the ability to add asynchronous functions
 		npm install async-ejs
 
 ## Usage
-
-Say you have 
+Say you have
+ 
+``` js
 /index.ejs
 /base.ejs
+```
 
-If base want to load the content of index.ejs it can do
+If base wants to load the content of index.ejs it can do
 
 ``` js
+Template stuff here
 <%- load('index.ejs') %>
+more template stuff
 ```	
 
 On the server you need to 
 
 ``` js
 var aejs = require('async-js');
-var common = require('common'); // has a nice step function
+var common = require('common'); //this has a nice step function
 
 aejs.renderFile('./base.ejs', function(err, result) {
 	// yay async!
@@ -29,7 +33,6 @@ aejs.renderFile('./base.ejs', function(err, result) {
 ```	
 
 ## Interface
-
 render a string
 
 ``` js
@@ -42,26 +45,24 @@ render a file
 renderFile(src, options, callback
 ```
 
-add a funciton to render
+add a function to render
 ``` js
 add(name,func)
 ```
 
 ## Example
-
-Call a unix command from a tempalte
+Call a unix command from a template and 
 
 ``` js
 aejs = require('async-ejs').add(exec,require('child-process').exec);
 
 ```
 
-now you in your template you can call any unix porccess and render its output :-) 
-``` html
-...
-<body>
-<h1>Time: <%- exec('date') %></h1>
+now you in your template you can call any unix process and render its output :-) 
+``` js
+Template stuff
+Time: <%- exec('date') %>
 Load CNN: <%- exec('curl -L cnn.com') %>
-</body>
-...
+Load another template: <%- load('filename') %>
+More template stuff
 ```
