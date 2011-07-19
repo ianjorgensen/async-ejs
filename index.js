@@ -3,7 +3,7 @@ var ejs = require('ejs');
 var exec = require('child_process').exec;
 var common = require('common');
 
-var add = function(name, fn) {
+exports.add = function(name, fn) {
 	fns[name] = fn;
 	return exports;
 };
@@ -22,7 +22,7 @@ var fns = {
 	}
 };
 
-var renderFile = function(file, options, callback) {
+exports.renderFile = function(file, options, callback) {
 	common.step([
 		function(next) {
 			fs.readFile(file, 'utf-8', next);
@@ -82,5 +82,4 @@ var render = function(src, options, callback) {
 };
 
 exports.render = render;
-exports.add = add;
 exports.fn = fns;
