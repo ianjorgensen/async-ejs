@@ -8,7 +8,7 @@ ejs with the ability to add asynchronous functions
 ## Usage
 Say you have
  
-``` js
+```
 /index.ejs
 /base.ejs
 ```
@@ -58,8 +58,9 @@ aejs = require('async-ejs').add(exec,require('child-process').exec);
 
 ```
 
-now you in your template you can call any unix process and render its output :-) 
-``` js
+now you in your template you can call any unix process and render its output
+
+```
 Template stuff
 Time: <%- exec('date') %>
 Load CNN: <%- exec('curl -L cnn.com') %>
