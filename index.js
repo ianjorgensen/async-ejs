@@ -5,7 +5,6 @@ var common = require('common');
 
 var noop = function() {};
 var fns = {file:noop};
-
 exports.fn = fns;
 
 var renderFile = function(file, options, callback) {
@@ -24,7 +23,6 @@ var renderFile = function(file, options, callback) {
 		}
 	], callback);
 };
-
 exports.renderFile = renderFile;
 
 var render = function(src, options, callback) {
@@ -86,7 +84,6 @@ var render = function(src, options, callback) {
 		}
 	], callback);
 };
-
 exports.render = render;
 
 var add = function(name, fn) {
@@ -100,5 +97,4 @@ var add = function(name, fn) {
 	
 	return exports;
 };
-
 exports.add = add;
