@@ -54,13 +54,13 @@ add(name,func)
 Call a unix command from a template and 
 
 ``` js
-aejs = require('async-ejs').add(exec,require('child-process').exec);
+aejs = require('async-ejs').add(exec,require('child_process').exec);
 
 ```
 
 now you in your template you can call any unix process and render its output
 
-```
+```	
 Template stuff
 Time: <%- exec('date') %>
 Load CNN: <%- exec('curl -L cnn.com') %>
