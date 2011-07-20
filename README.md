@@ -3,7 +3,7 @@ ejs with the ability to add asynchronous functions
 
 ## Install 
 	    
-		npm install async-ejs
+npm install async-ejs
 
 ## Usage
 Say you have
