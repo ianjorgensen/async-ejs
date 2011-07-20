@@ -33,13 +33,13 @@ aejs.renderFile('./base.ejs', function(err, result) {
 render a string
 
 ```js
-aejs.render(src, options, callback);
+aejs.render(src, options?, callback);
 ```
 
 render a file
 
 ```js
-aejs.renderFile(src, options, callback);
+aejs.renderFile(filename, options?, callback);
 ```
 
 add a function to render
