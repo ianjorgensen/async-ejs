@@ -5,6 +5,7 @@ var common = require('common');
 
 var noop = function() {};
 var fns = {file:noop};
+
 exports.fn = fns;
 
 var renderFile = function(file, options, callback) {
