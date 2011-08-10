@@ -1,40 +1,56 @@
-var fs = require('fs');
-var path = require('path');
-var ejs = require('ejs');
 var common = require('common');
+var ejs = require('ejs');
+var fs = require('fs');
 
-var noop = function() {};
-var fns = {file:noop};
+var adds = {};
+var creates = {};
 
-exports.fn = fns;
-
-var renderFile = function(file, options, callback) {
-	if (!callback) {
-		callback = options;
-		options = {};
-	}
-	
-	common.step([
-		function(next) {
-			fs.readFile(file, 'utf-8', next);
-		},
-		function(template) {
-			render(template, options, callback);
-		}
-	], callback);
+adds.raw = function(filename, callback) {
+	fs.readFile(filename, 'utf-8', callback);
 };
-exports.renderFile = renderFile;
+creates.file = function(locals, options) {
+	return function(filename, callback) {
+		exports.renderFile(filename, options, callback);
+	};
+};
 
-var render = function(src, options, callback) {
+exports.add = function(name, fn) {
+	adds[name] = fn;
+	return exports;	
+};
+exports.create = function(name, fn) {
+	creates[name] = fn;
+	return exports;	
+};
+exports.renderFile = function(filename, options, callback) {
 	if (!callback) {
 		callback = options;
 		options = {};
 	}
+	fs.readFile(filename, 'utf-8', common.fork(callback, function(src) {
+		exports.render(src, options, callback);
+	}));
+};
+exports.render = function(src, options, callback) {
+	if (!callback) {
+		callback = options;
+		options = {};
+	}
+
 	options.locals = options.locals || {};
 	
-	fns.file = function(filename, callback) {
-		renderFile(filename, options, callback);
-	};
+	var fns = options.fns;
+
+	if (!fns) {
+		options.fns = fns = {};
+
+		for (var i in adds) {
+			fns[i] = adds[i];
+		}
+		for (var i in creates) {
+			fns[i] = creates[i](options.locals, options);
+		}
+	}
 	
 	common.step([
 		function(next) {
@@ -46,7 +62,11 @@ var render = function(src, options, callback) {
 				};
 			});
 
-			var result = ejs.render(src, options);
+			var clone = common.join(options);
+
+			clone.locals = common.join(clone.locals);
+
+			var result = ejs.render(src, clone);
 			
 			if (!args.length) {
 				callback(null, result);
@@ -71,21 +91,7 @@ var render = function(src, options, callback) {
 			
 			src = ejs.render(src, options);
 		
-			callback(null,src);
+			callback(null, src);
 		}
 	], callback);
 };
-exports.render = render;
-
-var add = function(name, fn) {
-	if (typeof name === 'object') {
-		for (var i in name) {
-			add(i, name[i]);
-		}
-		return exports;
-	}
-	fns[name] = fn;
-	
-	return exports;
-};
-exports.add = add;
