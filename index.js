@@ -9,8 +9,19 @@ adds.raw = function(filename, callback) {
 	fs.readFile(filename, 'utf-8', callback);
 };
 creates.file = function(locals, options) {
-	return function(filename, callback) {
-		exports.renderFile(filename, options, callback);
+	return function(filename, locals, callback) {
+		var opt = common.join(options);
+
+		if (!callback) {
+			callback = locals;
+			locals = options.locals;
+		} else {
+			locals = common.join(options.locals, locals);
+		}
+
+		opt.locals = locals;
+
+		exports.renderFile(filename, opt, callback);
 	};
 };
 
